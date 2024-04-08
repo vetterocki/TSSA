@@ -1,0 +1,60 @@
+@startuml
+
+left to right direction
+
+skinparam usecase {
+    BorderColor DarkSlateGray
+}
+
+actor "Клієнт" as Client
+actor "Адміністратор" as Administrator
+
+rectangle "Електронний каталог товарів" {
+    usecase "Переглянути товари" as ViewProducts
+    usecase "Додати товар в бажане" as Desirable
+    usecase "Додати товар в кошик" as Collect
+    usecase "Оплатити товар" as PurchasePayment
+    usecase "Вхід до облікового запису" as ManageClientAccounts
+    usecase "Управління товаром" as ManageProducts
+    usecase "Перегляд замовлень" as Orders
+    usecase "Перегляд бажаних" as DesirableOverview
+    usecase "Скасувати замовлення" as CancelOrder
+    usecase "Підтвердження повернення товару" as ConfirmReturn
+    usecase "Відстежити статус замовлення" as Status
+    usecase "Перегляд акційних пропозицій" as Discounts
+    usecase "Обрати категорію товару" as CategorySelect
+    usecase "Фільтрування товарів" as Filter
+    usecase "Сортування за ціною/оцінкою покупців" as Sort
+
+    Client --> ViewProducts
+    Client --> Discounts
+
+    ViewProducts --> Desirable
+    ViewProducts --> Collect
+    ViewProducts --> CategorySelect
+    CategorySelect <|-- Filter
+    CategorySelect <|-- Sort
+    Collect <|-- PurchasePayment
+    Client --> ManageClientAccounts
+    ManageClientAccounts --> DesirableOverview
+    ManageClientAccounts --> Orders
+    Orders <|-- CancelOrder
+    Orders <|-- Status
+
+    Administrator --> ConfirmReturn
+    Administrator --> ManageProducts
+    usecase "Додавання нового товару до каталогу" as CreateProduct
+    usecase "Оновлення інформації про товар" as UpdateProductInfo
+    usecase "Видалення товару" as DeleteProduct
+    usecase "Додавання акцій на товари" as AddPromotions
+
+    ManageProducts <|-- UpdateProductInfo
+    ManageProducts <|-- DeleteProduct
+    ManageProducts <|-- CreateProduct
+    Administrator --> AddPromotions
+
+    usecase "Перегляд статистики продажів" as SalesStatistics
+    Administrator --> SalesStatistics
+}
+
+@enduml
