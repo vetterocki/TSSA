@@ -1,0 +1,66 @@
+@startuml
+skinparam sequenceArrowThickness 2
+skinparam roundcorner 20
+skinparam maxmessagesize 60
+
+
+actor Адміністратор as Admin
+participant "Панель управління" as Admin_panel
+participant "Заявки на повернення товару" as Accept_refund
+participant "Вікно додавання акції" as Sale
+participant "Вікно додавання нового товару" as New_product
+participant "Вікно статистики продажів" as Stat
+participant "Електронний каталог товарів" as Catalogue
+participant "Категорія товарів" as Category
+participant "Товар" as Product
+
+database "База даних" as Db
+
+Admin -> Admin_panel: Відкрити панель управління
+Admin_panel -> Stat: Перегляд статистики продажів
+group Перегляд статистики продажів
+
+    Stat --> Db: Фільтрування товарів
+    activate Db
+end
+Db --> Stat: Отримати статистику продажів
+deactivate Db
+
+Admin_panel -> Accept_refund: Переглинути заявки на повернення
+Accept_refund -> Db: Підтвердження повернення товару
+activate Db
+Db -> Accept_refund: Розглянути інші заявки
+deactivate Db
+
+Admin_panel -> Sale: Додати акцію
+Sale -> Db: Додавання акцій на товари
+activate Db
+Db -> Admin_panel
+deactivate Db
+
+Admin_panel -> New_product: Створити новий товар
+New_product -> Db: Підтвердити створення нового товару
+activate Db
+Db -> Admin_panel
+deactivate Db
+
+
+
+Admin-> Catalogue: Переглянути товари
+Catalogue -> Category: Обрати категорію товару
+
+group Пошук товару за критеріями
+
+    Category --> Db: Фільтрування товарів
+    activate Db
+    Category --> Db: Сортування товарів
+end
+
+Db --> Product: Обрати товар
+deactivate Db
+
+Product -> Db: Внести зміни в товар
+activate Db
+Db -> Product: Переглянути зміни
+deactivate Db
+@enduml
