@@ -1,0 +1,60 @@
+@startuml
+skinparam sequenceArrowThickness 2
+skinparam roundcorner 20
+skinparam maxmessagesize 60
+
+
+actor Клієнт as Client
+participant "Електронний каталог товарів" as Catalogue
+participant "Категорія товарів" as Category
+participant "Обраний товар" as Chosen
+participant "Кошик" as Collect
+participant "Особистий кабінет" as Login
+participant "Оформлення замовлення" as Order
+
+database "База даних" as Db
+
+Client -> Catalogue: Переглянути товари
+Catalogue -> Category: Обрати категорію товару
+
+group Пошук товару за критеріями
+
+    Category --> Db: Фільтрування товарів
+    activate Db
+    Category --> Db: Сортування товарів
+end
+
+Db --> Chosen: Отримати задовільний товар
+deactivate Db
+
+Chosen -> Collect: Додати товар в кошик
+Collect --> Order: Перейти до оплати
+Order -> Db: Вказати контактні дані
+activate Db
+Db --> Login: Замовлення передано в обробку
+deactivate Db
+Chosen -> Db: Додати товар в бажане
+
+activate Db
+Db -> Chosen: Товар додано до списку бажаного
+deactivate Db
+
+Client -> Login: Увійти до облікового запису
+
+group Замовлення
+Login -> Db: Перегляд замовлень
+activate Db
+Db --> Login: Отримати список замовлень
+deactivate Db
+
+Login -> Db: Відстежити статус замовлення
+activate Db
+Login -> Db: Скасувати замовлення
+Db -> Login: Обробити запит
+deactivate Db
+end
+
+
+
+
+@enduml
