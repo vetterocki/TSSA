@@ -1,0 +1,37 @@
+@startuml
+skinparam componentStyle rectangle
+
+actor Admin as admin
+
+[AdminPanel: Panel] as ap
+[SalesPanel: Panel] as salep
+[ProductPanel: Panel] as pp
+[StatsPanel: Panel] as statp
+
+[ProductsCatalogue: Collection] as pc
+[ReturnApplicationsCatalogue: Collection] as ra
+[Product: Product] as p
+[DatabaseDriver] as db
+
+admin --> ap : "1 : open(): void"
+
+ap --> salep : "2 : openSalesPanel(): void"
+salep --> db : "3 : save(Sale): Boolean"
+
+ap --> pp : "2 : openProductPanel(): void"
+pp --> db : "3 : save(Product): Boolean"
+
+ap --> statp : "2 : openStatsPanel(): void"
+statp --> statp : "3 : filter(Product): void"
+statp --> db : "4 : analyze(): Statistics"
+
+ap --> ra : "2 : openReturnApps(): void"
+ra --> db : "3 : approve(ReturnApplication): Boolean"
+
+admin --> pc : "1 : openProducts(): void"
+pc --> pc : "2 : getByCategory(Category): void"
+pc --> pc : "3 : filter(Product)/sort(Criteria): void"
+pc --> p : "4 : getProduct(Product): void"
+p --> db : "5 : update(Product)/delete(Product): Boolean"
+
+@enduml
