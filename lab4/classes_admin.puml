@@ -1,0 +1,103 @@
+@startuml
+
+package admin {
+    abstract class Panel {
+        # options : Collection<Option>
+        + navigate(Option): void
+    }
+
+    class AdminPanel {
+        + openSalesPanel(): SalesPanel
+        + openProductPanel(): ProductPanel
+        + openStatisticsPanel(): StatisticsPanel
+        + openReturns(): ReturnsPanel
+    }
+
+    class ReturnsPanel {
+        + approve(Return): Boolean
+    }
+
+    class SalesPanel {
+        + createSale(Sale): Boolean
+        + getSalesMatching(Sale): Collection<Sale>
+        + updateSale(Sale): Boolean
+        + deleteSale(Sale): Boolean
+    }
+
+    class ProductPanel {
+        + createProduct(Product): Boolean
+        + getProductsMatching(Product): Collection<Product>
+    }
+
+    class StatisticsPanel {
+        + getStatisticsByFilter(Map<String, String>): Collection<Statistic>
+    }
+
+    AdminPanel::openSalesPanel --> SalesPanel
+    AdminPanel::openProductPanel --> ProductPanel
+    AdminPanel::openStatisticsPanel --> StatisticsPanel
+    AdminPanel::openReturns --> ReturnsPanel
+
+    AdminPanel --|> Panel
+    SalesPanel --|> Panel
+    ProductPanel --|> Panel
+    StatisticsPanel --|> Panel
+    ReturnsPanel --|> Panel
+
+}
+
+package model {
+    class Return {
+        - orderId: String
+        - reason: String
+        - date: Date
+    }
+
+    ReturnsPanel::approve --> Return
+
+    class Sale {
+        - name: String
+        - description: String
+        - filters: Map<String, String>
+        - formula: DoubleFunction<Double>
+        - startDate: Date
+        - endDate: Date
+    }
+
+    SalesPanel --> Sale
+
+    class Product {
+        - name: String
+        - specifics: Map<String, String>
+        - price: double
+        - labels: Collection<String>
+    }
+
+    ProductPanel --> Product
+
+    class Statistic {
+        - name: String
+        - value: String
+        - startDate: Date
+        - endDate: Date
+    }
+
+    StatisticsPanel --> Statistic
+
+    class Option {
+        - name: String
+        - accessedBy: Role
+        - location: String
+    }
+
+    Panel::options --> Option
+
+    enum Role {
+        - name: String
+        - priority: int
+    }
+
+    Option::accessedBy --> Role
+}
+
+@enduml
