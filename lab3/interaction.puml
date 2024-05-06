@@ -1,0 +1,53 @@
+@startuml
+skinparam componentStyle rectangle
+
+actor Client as client
+
+[Catalogue: CataloguePage] as catalogue
+[ProductRepository: ProductRepository] as productRepository
+[OrderRepository: OrderRepository] as orderRepository
+[Category: CategoryPage] as category
+[ChosenProduct: ProductPage] as chosen
+[ProductN1234: Product] as product
+[OrderN1234: Order] as singleOrder
+[Cart: Cart] as cart
+[Account: ClientAccountPage] as account
+[DesirableList: DesirableProductsPage] as desirable
+[OrderPage: ProductOrderPage] as orderPage
+[EntityManager: EntityManager] as transaction
+
+client --> catalogue : "1 : openCatalogue(): Boolean"
+catalogue --> category : "2 : selectCategory(): Collection<Product>"
+category --> category: "3 : filter(Product, Comparator): Collection<Product>"
+category --> chosen: "4: getProductDetails(String): Product"
+
+chosen --> cart: "5: addProductToCart(Product): void"
+cart --> productRepository: "6: saveProduct(ProductID: Long): Product"
+productRepository --> transaction: "7: saveProduct(ProductID: Long): Product"
+transaction -- transaction: "8: commit(): Integer"
+transaction --> product: "9: getProductDetails(): Product"
+
+note left of chosen
+    Adding to desirable list
+    requires authentication
+end note
+chosen --> productRepository: "10: addProductToDesirableList(Product): void"
+
+client --> cart: "11: getCart(): Cart"
+cart -> orderRepository: "12: saveOrderAfterPayment(Order): Order"
+orderRepository --> transaction: "13: saveOrder(OrderID: Long): Order"
+transaction --> singleOrder: "14: getOrderDetails(): Order"
+
+client -->  account: "15: login(String, String): void"
+account --> desirable: "16: getDesirableList(): void"
+desirable --> productRepository: "17: removeFromDesirable(Product): void"
+productRepository --> product: "18: removeProduct(ProductID: Long): void"
+
+account --> orderPage: "19: getOrdersPage(): void"
+orderPage --> orderRepository: "20: trackOrder(Order): void"
+orderPage --> orderRepository: "21: selectOrder(Order): Order"
+orderPage --> orderRepository: "22: cancelOrder(Order): void"
+orderRepository --> singleOrder: "23: deleteOrder(OrderID: Long): void"
+
+
+@enduml

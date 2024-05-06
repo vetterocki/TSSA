@@ -1,0 +1,118 @@
+@startuml
+skinparam style strict
+
+class ClientPanel {
+  + openCatalogue(): CataloguePage
+  + getCart(): Cart
+  + login(username: String, password: String): ClientAccountPage
+  + getDesirableList(): DesirableProductsPage
+  + getOrdersPage(): ProductOrderPage
+}
+
+class CataloguePage {
+  - pageNumber: Integer
+  - totalPagesAmount: Integer
+  - totalCategoriesAmount: Integer
+
+  + selectCategory(): Collection<Product>
+}
+
+class CategoryPage {
+  - pageNumber: Integer
+  - totalPagesAmount: Integer
+  - productsInCategory: Integer
+
+  + filter(products: Collection<Product>, comparator: Comparator): Collection<Product>
+}
+
+class ProductPage {
+  - pageNumber: Integer
+  - totalPagesAmount: Integer
+  - productsAmount: Integer
+
+  + getProductDetails(productId: String): Product
+  + addProductToCart(product: Product): void
+  + addProductToDesirableList(product: Product): void
+}
+
+class Cart {
+  + saveProduct(productId: Long): Product
+}
+
+class ClientAccountPage {
+  + login(username: String, password: String): void
+}
+
+class DesirableProductsPage {
+  + removeFromDesirable(product: Product): void
+}
+
+class ProductOrderPage {
+  + trackOrder(order: Order): void
+  + selectOrder(order: Order): Order
+  + cancelOrder(order: Order): void
+}
+
+interface ProductRepository {
+  + saveProduct(productId: Long): Product
+  + removeProduct(productId: Long): void
+}
+
+interface OrderRepository {
+  + saveOrder(order: Order): Order
+  + deleteOrder(orderId: Long): void
+}
+
+interface EntityManager {
+  + commit(): Integer
+
+}
+
+entity Product {
+  - ID: Long
+  - name: String
+  - specifics: Map<String, String>
+  - price: BigDecimal
+  - labels: Collection<String>
+}
+
+entity Order {
+  - ID: Long
+  - products: List<Product>
+  - orderDate: LocalDateTime
+  - status: OrderStatus
+  - customer: String
+}
+
+enum OrderStatus {
+   - name: String
+   - statusBeginningDate: LocalDateTime
+}
+
+Order::products --> Product
+Order::status -> OrderStatus
+
+ClientPanel --> CataloguePage
+CataloguePage --> CategoryPage
+CategoryPage --> ProductPage
+ProductPage --> Cart
+ProductPage --> ProductRepository
+Cart --> ProductRepository
+ProductRepository --> EntityManager
+EntityManager --> Product
+ClientPanel --> Cart
+Cart --> OrderRepository
+OrderRepository --> EntityManager
+EntityManager --> Order
+ClientPanel --> ClientAccountPage
+ClientAccountPage --> DesirableProductsPage
+DesirableProductsPage --> ProductRepository
+ProductRepository --> Product
+ClientPanel --> ProductOrderPage
+ProductOrderPage --> OrderRepository
+ProductOrderPage --> OrderRepository
+ProductOrderPage --> OrderRepository
+OrderRepository --> Order
+
+
+@enduml
