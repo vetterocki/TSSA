@@ -1,0 +1,18 @@
+@startuml
+left to right direction
+cloud Internet
+node API <<device>>{
+  artifact jarAPI <<executable environment>>
+}
+database ApiDatabase {
+}
+database AuthDatabase {
+}
+node AuthServer <<device>> {
+  artifact jarServer <<executable environment>>
+}
+Internet -- API
+API -- AuthServer
+AuthServer -- AuthDatabase
+API -- ApiDatabase
+@enduml

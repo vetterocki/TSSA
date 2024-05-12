@@ -1,0 +1,40 @@
+@startuml
+left to right direction
+
+package API {
+    port port1
+    component "Business Logic" as apibl <<api>>
+    component AuthFilter as af
+    interface FilterChain as fc
+    interface RequestDispatcher as rdapi
+    database PostgreSQL as apidb {
+        component ApiDatabase as apidbc
+    }
+    interface DAO as apidao
+}
+
+package Auth {
+    port port2
+    interface RequestDispatcher as rdauth
+    component Authorization as auth <<api>>
+    database PostgreSQL as authdb {
+        component AuthDatabase as authdbc
+    }
+    interface DAO as authdao
+}
+
+component "User Interface" as ui
+ui --> port1: HTTP
+port1 --( rdapi
+rdapi -- af
+af -( fc
+fc - apibl
+apibl -( apidao
+apidao - apidb
+
+af --> port2: HTTP
+port2 --( rdauth
+rdauth -- auth
+auth --( authdao
+authdao - authdb
+@enduml
