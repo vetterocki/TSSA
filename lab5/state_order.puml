@@ -1,0 +1,43 @@
+@startuml
+hide empty description
+
+[*] --> OrderLifecycle: Order Created
+
+state OrderLifecycle {
+  [*] --> New : New Order
+  New -left-> Processing : Order Confirmed
+}
+
+state New {
+  [*] --> OrderCreated : Create Order
+}
+OrderCreated : Newly created order
+
+state Processing {
+  [*] --> OrderConfirmed : Confirm Order
+}
+OrderConfirmed : Order processing
+
+state Shipped {
+  [*] --> OrderProcessed : Process Order
+}
+OrderProcessed : Order in transit
+
+state Delivered {
+  [*] --> OrderDelivered : Deliver Order
+}
+OrderDelivered : Order completed
+
+state Cancelled {
+  [*] --> OrderCancelled : Cancel Order
+}
+
+OrderCancelled : Order cancelled before processing
+New --> Cancelled : Order Cancelled
+Processing --> Cancelled : Order Cancelled
+
+Processing --> Shipped : Order Processed
+Shipped -left-> Delivered : Order Shipped
+Delivered --> [*] : Order Delivered
+
+@enduml
