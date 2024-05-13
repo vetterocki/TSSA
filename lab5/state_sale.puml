@@ -1,0 +1,24 @@
+@startuml
+hide empty description
+
+[*] --> Created: Administrator created a sale
+
+state Scheduled {
+    state Applied
+    state Expired
+}
+
+Created --> Applied: if sale is for present time
+Applied --> Expired: Sale reached its endDate
+Expired --> Applied: Sale's endDate has been updated
+Expired --> [*]: Old sales are automatically deleted
+
+state Created: Sale is now instantiated and exists in the system
+state Applied: The price of the specified products is discounted
+state Applied: This state lasts at the defined time
+
+state Expired: Discount is not applied for products
+state Expired: but Sale still exists in the system
+
+
+@enduml
