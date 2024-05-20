@@ -1,0 +1,45 @@
+@startuml
+start
+fork
+    while (Creating order) is ( Selected product is available)
+        :Add product to order;
+    endwhile (Order successfully completed )
+    :Save order to database;
+
+      if (Order Processed?) then (yes)
+
+
+        if (Order in transit?) then (yes)
+
+          :Delivering Order;
+          :Order completed;
+          stop
+        else (no)
+           if (Order not shipped yet) then
+                :Change order shipping point;
+           endif
+
+        endif
+      else (no)
+        :Order not processed;
+
+      endif
+
+
+fork again
+
+    :View orders in account page;
+    fork
+        :Cancel order;
+        :Delete Order from Database;
+        end;
+    fork again
+        :Track order;
+    end merge;
+end fork;
+
+
+
+
+stop
+@enduml
