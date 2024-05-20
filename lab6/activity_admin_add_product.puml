@@ -1,0 +1,24 @@
+@startuml
+'title Activity Diagram for `Add product` use-case
+start
+if (Is Authorized as Admin?) then (Yes)
+    :Open Admin Panel;
+    if (Has an Authority to Create Product?) then (Yes)
+        :Open new product info page;
+        fork
+            :Enter all info about new product;
+        fork again
+            :Check info for correctness;
+            note right: Reactively checks admin`s input
+        end fork;
+        :Create new Product;
+        note right: Product entity is persisted in DB
+    else (No)
+        end
+    endif
+else (No)
+        #pink:error;
+        kill
+endif
+stop
+@enduml
