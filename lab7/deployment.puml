@@ -1,0 +1,51 @@
+@startuml DockerComposeDiagram
+left to right direction
+actor User as UserActor
+UserActor as "User"
+
+node "Browser" <<execution environment>> {
+    node "Firefox" <<execution environment>> {
+    }
+}
+
+
+node "Docker Compose" as DeviceNode <<Device>> {
+    node "Volume" as VolumeNode <<Volume>> {
+        node "PostgreSQL Volume" {
+            [Docker Volume]
+        }
+    }
+    node "Docker network app" as NetworkNode {
+        node "Frontend" as FrontendNode <<Container>> {
+
+            [HTML, CSS] <<static>> as static
+            [ReactComponentContainer] as react
+            [ReduxStore] as redux
+
+            react <-> static
+            redux <- react
+        }
+
+        node "API" as APINode <<Container>> {
+
+            node "Spring Boot" as AppJar {
+                [Application.jar]
+            }
+        }
+
+        node "Database" as DatabaseNode <<Container>> {
+            node "PostgreSQL" {
+
+            }
+        }
+    }
+
+
+}
+
+UserActor -- "Browser": https
+"Browser" -- FrontendNode: [https:3030]
+FrontendNode -- APINode: [https:8080]
+APINode -- DatabaseNode: [https:5432]
+DatabaseNode -- VolumeNode
+@enduml

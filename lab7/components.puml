@@ -1,0 +1,58 @@
+@startuml
+
+[CLIENT] as client
+
+
+interface HTTP
+interface TCP
+
+
+component ProductCatalogueClientSide {
+    port frontEndPort
+
+    component ReactComponent
+    component ReduxContainer
+
+    interface ContainerInterface
+    portout backEndPort
+}
+
+
+
+
+
+client -- HTTP
+HTTP -- frontEndPort
+frontEndPort ..> ReactComponent
+ReactComponent -- ContainerInterface
+ContainerInterface -- ReduxContainer
+ReduxContainer ..> backEndPort
+
+
+
+component ProductCatalogueServer {
+    port apiPort
+
+    component EntityController
+    interface EntityService
+    component EntityManager
+
+    portout dbPort
+}
+
+component PostgresDatabase
+
+
+backEndPort -- apiPort
+apiPort ..> EntityController
+EntityController -- EntityService
+EntityService -- EntityManager
+EntityManager -right..> dbPort
+dbPort -- TCP
+TCP - PostgresDatabase
+
+note top of TCP: Process request to DB
+
+
+
+@enduml
